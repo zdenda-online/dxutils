@@ -27,7 +27,7 @@ Examples
 DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
 
 OutputStream os = storage.getOutputStream();
-// write any data to storage via os, if over 1kB it gets automatically stored to /tmp/backing.tmp
+// write data to storage via os, if over 1kB it gets automatically stored to /tmp/backing.tmp
 os.close();
 
 InputStream is = storage.getInputStream();
@@ -36,8 +36,8 @@ is.close();
 
 storage.destroy(); // release resource when finished with storage
 
-// optionally you can use try-with-resources that will automatically release all resources in the end
-try (MemoryFileStorage storage = new MemoryFileStorage(10, tempFile)) {
+// optionally you can use try-with-resources that will automatically call destroy()
+try (DataStorage storage = new MemoryFileStorage(...)) {
    // do work
 }
 ```
