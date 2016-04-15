@@ -31,7 +31,7 @@ public class MemoryFileStorageTest {
 
     @Test
     public void onlyInMemoryWithCustomFile() throws IOException {
-        File tempFile = File.createTempFile("data_storage_test", null);
+        File tempFile = prepareCustomTempFile();
         MemoryFileStorage storage = new MemoryFileStorage(tempFile);
 
         byte[] bytes = "These are some nice bytes".getBytes(Charsets.UTF_8.name());
@@ -44,7 +44,7 @@ public class MemoryFileStorageTest {
 
     @Test
     public void thresholdExceededCreatesCustomFile() throws IOException {
-        File tempFile = File.createTempFile("tmp", null);
+        File tempFile = prepareCustomTempFile();
         MemoryFileStorage storage = new MemoryFileStorage(10, tempFile);
 
         byte[] bytes = "These are some nice bytes".getBytes(Charsets.UTF_8.name());
@@ -57,19 +57,47 @@ public class MemoryFileStorageTest {
 
     @Test
     public void thresholdExceededCreatesDefaultFile() throws IOException {
-        MemoryFileStorage storage = new MemoryFileStorage(10);
+        MemoryFileStorage storage = new MemoryFileStorage();
 
         byte[] bytes = "These are some nice bytes".getBytes(Charsets.UTF_8.name());
         writeToStorage(storage, bytes);
 
         assertDataInStorage(storage, bytes);
+        assertTempFileExists(false);
+        storage.destroy();
+    }
+
+    @Test
+    public void onlyInMemoryAppendsData() throws IOException {
+        MemoryFileStorage storage = new MemoryFileStorage();
+
+        byte[] bytes = "These are some".getBytes(Charsets.UTF_8.name());
+        writeToStorage(storage, bytes);
+        byte[] bytes2 = " nice bytes".getBytes(Charsets.UTF_8.name());
+        writeToStorage(storage, bytes2);
+
+        assertDataInStorage(storage, "These are some nice bytes".getBytes(Charsets.UTF_8.name()));
+        assertTempFileExists(false);
+        storage.destroy();
+    }
+
+    @Test
+    public void thresholdExceededAppendsDataToDefaultFile() throws IOException {
+        MemoryFileStorage storage = new MemoryFileStorage(5);
+
+        byte[] bytes = "These are some".getBytes(Charsets.UTF_8.name());
+        writeToStorage(storage, bytes);
+        byte[] bytes2 = " nice bytes".getBytes(Charsets.UTF_8.name());
+        writeToStorage(storage, bytes2);
+
+        assertDataInStorage(storage, "These are some nice bytes".getBytes(Charsets.UTF_8.name()));
         assertTempFileExists(true);
         storage.destroy();
     }
 
     @Test
     public void autocloseDestroysFile() throws IOException {
-        File tempFile = File.createTempFile("tmp", null);
+        File tempFile = prepareCustomTempFile();
         try (MemoryFileStorage storage = new MemoryFileStorage(10, tempFile)) {
             byte[] bytes = "These are some nice bytes".getBytes(Charsets.UTF_8.name());
             writeToStorage(storage, bytes);
@@ -128,6 +156,17 @@ public class MemoryFileStorageTest {
             } catch (IOException e) {
                 Assert.fail("IOException thrown " + e.getMessage());
             }
+        }
+    }
+
+    private File prepareCustomTempFile() {
+        try {
+            File f = File.createTempFile("data_storage_test", null);
+            f.delete();
+            return f;
+        } catch (IOException e) {
+            Assert.fail("IOException " + e.getMessage());
+            return new File("."); // satisfy compiler
         }
     }
 }

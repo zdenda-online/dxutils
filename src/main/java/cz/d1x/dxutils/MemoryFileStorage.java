@@ -28,7 +28,7 @@ public class MemoryFileStorage implements DataStorage {
      * @throws IOException possible exception if backing file in temporary directory cannot be created
      */
     public MemoryFileStorage() throws IOException {
-        this(DEFAULT_THRESHOLD, File.createTempFile("memory_file", null));
+        this(DEFAULT_THRESHOLD, prepareTempFile());
     }
 
     /**
@@ -38,7 +38,7 @@ public class MemoryFileStorage implements DataStorage {
      * @throws IOException possible exception if backing file in temporary directory cannot be created
      */
     public MemoryFileStorage(long sizeThreshold) throws IOException {
-        this(sizeThreshold, File.createTempFile("memory_file", null));
+        this(sizeThreshold, prepareTempFile());
     }
 
     /**
@@ -69,13 +69,12 @@ public class MemoryFileStorage implements DataStorage {
      * The stream automatically starts writing to memory and switches to file if threshold is reached.
      * Note that client should close the stream when finished with writing to it.
      * <p>
-     * If client calls this method and storage already contains any data, these data will be automatically destroyed by
-     * {@link #destroy()} to avoid unpredicted state.
+     * You can retrieve output stream multiple times while writing to it appends data
+     * (if not destroyed by {@link #destroy()}).
      *
      * @return output stream for writing data to the storage.
      */
     public OutputStream getOutputStream() {
-        destroy(); // clear internal state
         return new OutputStream() {
 
             @Override
@@ -164,7 +163,7 @@ public class MemoryFileStorage implements DataStorage {
     }
 
     private void copyMemoryToFile() throws IOException {
-        fileOutputStream = new FileOutputStream(backingFile);
+        fileOutputStream = new FileOutputStream(backingFile, true);
         fileOutputStream.write(memoryBytes.toByteArray());
         memoryBytes = new ByteArrayOutputStream(); // free memory
     }
@@ -175,5 +174,11 @@ public class MemoryFileStorage implements DataStorage {
         } catch (IOException e) {
             throw new IllegalStateException("Output stream to backing file cannot be closed", e);
         }
+    }
+
+    private static File prepareTempFile() throws IOException {
+        File tempFile = File.createTempFile("memory_file", null);
+        tempFile.delete(); // delete it, I want to create it if needed
+        return tempFile;
     }
 }
