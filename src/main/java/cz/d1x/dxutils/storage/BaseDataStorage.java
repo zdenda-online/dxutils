@@ -76,6 +76,7 @@ public abstract class BaseDataStorage implements DataStorage {
      * Note that if data are larger than Integer.MAX_VALUE thus larger than {@link String} can carry, then
      * {@link OutOfMemoryError} is thrown.
      *
+     * @param encoding encoding for the string
      * @return string representation of data in given encoding
      */
     public String readString(String encoding) {
