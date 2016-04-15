@@ -27,14 +27,14 @@ Examples
 DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
 
 OutputStream os = storage.getOutputStream();
-// write data to storage via os, if over 1kB it gets automatically stored to /tmp/backing.tmp
+// write data to storage, if over 1kB it gets automatically stored to /tmp/backing.tmp
 os.close();
 
 InputStream is = storage.getInputStream();
 // read data from storage
 is.close();
 
-storage.destroy(); // release resource when finished with storage
+storage.destroy(); // releases memory or deletes /tmp/backing.tmp if created
 
 // optionally you can use try-with-resources that will automatically call destroy()
 try (DataStorage storage = new MemoryFileStorage(...)) {
