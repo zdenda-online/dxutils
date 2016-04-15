@@ -1,4 +1,4 @@
-package cz.d1x.dxutils;
+package cz.d1x.dxutils.storage;
 
 import java.io.*;
 
@@ -11,8 +11,9 @@ import java.io.*;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see DataStorage
+ * @see BaseDataStorage
  */
-public class MemoryFileStorage implements DataStorage {
+public class MemoryFileStorage extends BaseDataStorage {
 
     private static final long DEFAULT_THRESHOLD = 5 * 1000 * 1000; // 5MB
 
@@ -57,8 +58,8 @@ public class MemoryFileStorage implements DataStorage {
      * @param backingFile   file to be used for storing bytes if size exceeds threshold
      */
     public MemoryFileStorage(long sizeThreshold, File backingFile) {
-        if (sizeThreshold < 0) {
-            throw new IllegalArgumentException("Must specify non-negative threshold value");
+        if (sizeThreshold < 0 || sizeThreshold > (Integer.MAX_VALUE - 8)) {
+            throw new IllegalArgumentException("Threshold must be value between 0 and (Integer.MAX_VALUE - 8)");
         }
         this.sizeThreshold = sizeThreshold;
         this.backingFile = backingFile;
@@ -133,7 +134,7 @@ public class MemoryFileStorage implements DataStorage {
             try {
                 return new FileInputStream(backingFile);
             } catch (FileNotFoundException e) {
-                throw new IllegalStateException("No data were written to the storage or backing file was deleted", e);
+                throw new DataStorageException("No data were written to the storage or backing file was deleted", e);
             }
         } else {
             return new ByteArrayInputStream(memoryBytes.toByteArray());
@@ -155,13 +156,6 @@ public class MemoryFileStorage implements DataStorage {
         backingFile.delete();
     }
 
-    /**
-     * Destroys this storage by releasing memory (if any data there) and deleting backing file if there is any.
-     */
-    public void close() {
-        destroy();
-    }
-
     private void copyMemoryToFile() throws IOException {
         fileOutputStream = new FileOutputStream(backingFile, true);
         fileOutputStream.write(memoryBytes.toByteArray());
@@ -172,7 +166,7 @@ public class MemoryFileStorage implements DataStorage {
         try {
             fileOutputStream.close(); // if already closed, does nothing
         } catch (IOException e) {
-            throw new IllegalStateException("Output stream to backing file cannot be closed", e);
+            throw new DataStorageException("Output stream to backing file cannot be closed", e);
         }
     }
 

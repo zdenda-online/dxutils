@@ -1,4 +1,4 @@
-package cz.d1x.dxutils;
+package cz.d1x.dxutils.storage;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -92,6 +92,40 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, "These are some nice bytes".getBytes(Charsets.UTF_8.name()));
         assertTempFileExists(true);
+        storage.destroy();
+    }
+
+    @Test
+    public void writeBytes() throws IOException {
+        MemoryFileStorage storage = new MemoryFileStorage();
+
+        storage.write("Hello".getBytes());
+
+        assertDataInStorage(storage, "Hello".getBytes());
+        assertTempFileExists(false);
+        storage.destroy();
+    }
+
+    @Test
+    public void writeUtf8String() throws IOException {
+        MemoryFileStorage storage = new MemoryFileStorage();
+
+        storage.write("Hello");
+
+        assertDataInStorage(storage, "Hello".getBytes(Charsets.UTF_8.name()));
+        assertTempFileExists(false);
+        storage.destroy();
+    }
+
+    @Test
+    public void readString() throws IOException {
+        MemoryFileStorage storage = new MemoryFileStorage();
+
+        storage.write("Hello");
+        String str = storage.readString();
+
+        Assert.assertEquals("Hello", str);
+        assertTempFileExists(false);
         storage.destroy();
     }
 

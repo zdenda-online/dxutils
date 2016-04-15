@@ -1,4 +1,4 @@
-package cz.d1x.dxutils;
+package cz.d1x.dxutils.storage;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,6 +12,7 @@ import java.io.OutputStream;
  * as implementations are {@link AutoCloseable}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ * @see BaseDataStorage
  * @see MemoryFileStorage
  */
 public interface DataStorage extends AutoCloseable {
