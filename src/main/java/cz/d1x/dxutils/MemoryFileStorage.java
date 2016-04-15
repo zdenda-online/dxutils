@@ -9,7 +9,7 @@ import java.io.*;
  * The implementation is not thread-safe. It is up to client to take care of synchronization on single write/read
  * operations if needed.
  */
-public class MemoryFileBackedStorage implements DataStorage {
+public class MemoryFileStorage implements DataStorage {
 
     private static final long DEFAULT_THRESHOLD = 5 * 1000 * 1000; // 5MB
 
@@ -20,21 +20,40 @@ public class MemoryFileBackedStorage implements DataStorage {
     private OutputStream fileOutputStream = null;
 
     /**
+     * Creates a new storage with backing file in temporary directory and default threshold of 5MB.
+     *
+     * @throws IOException possible exception if backing file in temporary directory cannot be created
+     */
+    public MemoryFileStorage() throws IOException {
+        this(DEFAULT_THRESHOLD, File.createTempFile("memory_file", null));
+    }
+
+    /**
+     * Creates a new storage with backing file in temporary directory and given threshold.
+     *
+     * @param sizeThreshold size threshold (in bytes) to drive switching from memory to file.
+     * @throws IOException possible exception if backing file in temporary directory cannot be created
+     */
+    public MemoryFileStorage(long sizeThreshold) throws IOException {
+        this(sizeThreshold, File.createTempFile("memory_file", null));
+    }
+
+    /**
      * Creates a new storage with given backing file and default threshold of 5MB.
      *
      * @param backingFile file to be used for storing bytes if size exceeds 5MB
      */
-    public MemoryFileBackedStorage(File backingFile) {
+    public MemoryFileStorage(File backingFile) {
         this(DEFAULT_THRESHOLD, backingFile);
     }
 
     /**
      * Creates a new storage with given backing file and given threshold.
      *
-     * @param sizeThreshold size threshold (in bytes) to drive switching to memory.
+     * @param sizeThreshold size threshold (in bytes) to drive switching from memory to file.
      * @param backingFile   file to be used for storing bytes if size exceeds threshold
      */
-    public MemoryFileBackedStorage(long sizeThreshold, File backingFile) {
+    public MemoryFileStorage(long sizeThreshold, File backingFile) {
         if (sizeThreshold < 0) {
             throw new IllegalArgumentException("Must specify non-negative threshold value");
         }
