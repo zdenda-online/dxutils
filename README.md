@@ -29,7 +29,7 @@ DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
 OutputStream os = storage.getOutputStream();
 // write data to storage, if over 1kB it gets automatically stored to /tmp/backing.tmp
 os.close();
-// optionally you can get new output stream again to append new data
+// optionally you can storage.getOutputStream() again, writing to it will append new data
 
 InputStream is = storage.getInputStream();
 // read data from storage
