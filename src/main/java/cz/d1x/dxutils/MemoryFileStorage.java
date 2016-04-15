@@ -8,6 +8,9 @@ import java.io.*;
  * <p>
  * The implementation is not thread-safe. It is up to client to take care of synchronization on single write/read
  * operations if needed.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ * @see DataStorage
  */
 public class MemoryFileStorage implements DataStorage {
 

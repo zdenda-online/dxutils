@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Tests {@link MemoryFileStorage} implementation.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class MemoryFileStorageTest {
 
     @Test

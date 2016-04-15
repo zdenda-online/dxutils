@@ -10,6 +10,9 @@ import java.io.OutputStream;
  * and later read via its {@link #getInputStream()}. The client should {@link #destroy()} the storage when finished with it
  * to release all the resources. The {@link #destroy()} can be used in combination with try-with-resource statement
  * as implementations are {@link AutoCloseable}.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ * @see MemoryFileStorage
  */
 public interface DataStorage extends AutoCloseable {
 
