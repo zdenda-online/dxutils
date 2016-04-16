@@ -18,41 +18,19 @@ public abstract class BaseDataStorage implements DataStorage {
 
     private static final int BUFFER_SIZE = 8 * 1024;
 
-    /**
-     * Stores given bytes to the storage.
-     *
-     * @param bytes bytes to be stored
-     */
-    public void write(byte[] bytes) {
+    public void write(byte[] bytes) throws IORuntimeException {
         write(new ByteArrayInputStream(bytes));
     }
 
-    /**
-     * Stores given string to the storage using UTF-8 encoding.
-     *
-     * @param data data to be stored
-     */
-    public void write(String data) {
+    public void write(String data) throws IORuntimeException {
         write(data.getBytes(Charset.forName("UTF-8")));
     }
 
-    /**
-     * Stores given string to the storage using given encoding.
-     *
-     * @param data     data to be stored
-     * @param encoding encoding of the string
-     */
-    public void write(String data, String encoding) {
+    public void write(String data, String encoding) throws IORuntimeException {
         write(data.getBytes(Charset.forName(encoding)));
     }
 
-    /**
-     * Writes data from given input stream to the storage.
-     * Note that client is responsible for closing the stream (this method does not do that).
-     *
-     * @param is input stream with data
-     */
-    public void write(InputStream is) {
+    public void write(InputStream is) throws IORuntimeException {
         try (OutputStream os = getOutputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int len;
@@ -64,37 +42,15 @@ public abstract class BaseDataStorage implements DataStorage {
         }
     }
 
-    /**
-     * Reads data from the storage and gives them as {@link String} representation in UTF-8 encoding.
-     * Note that if data are larger than Integer.MAX_VALUE thus larger than {@link String} can carry, then
-     * {@link OutOfMemoryError} is thrown.
-     *
-     * @return string representation of data in UTF-8
-     */
-    public String readString() {
+    public String readString() throws IORuntimeException {
         return new String(readBytes(), Charset.forName("UTF-8"));
     }
 
-    /**
-     * Reads data from the storage and gives them as {@link String} representation in given encoding.
-     * Note that if data are larger than Integer.MAX_VALUE thus larger than {@link String} can carry, then
-     * {@link OutOfMemoryError} is thrown.
-     *
-     * @param encoding encoding for the string
-     * @return string representation of data in given encoding
-     */
-    public String readString(String encoding) {
+    public String readString(String encoding) throws IORuntimeException {
         return new String(readBytes(), Charset.forName(encoding));
     }
 
-    /**
-     * Reads data from the storage and gives them as byte array representation.
-     * Note that if data are larger than Integer.MAX_VALUE thus larger than byte array can carry, then
-     * {@link OutOfMemoryError} is thrown.
-     *
-     * @return bytes of data
-     */
-    public byte[] readBytes() {
+    public byte[] readBytes() throws IORuntimeException {
         try (InputStream is = getInputStream()) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
@@ -109,9 +65,6 @@ public abstract class BaseDataStorage implements DataStorage {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void close() {
         clear();
     }

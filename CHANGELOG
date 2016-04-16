@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 0.3
+* Refactorings and javadoc updates
+
 Version 0.2
 * Added SynchronizedDataStorage
 * Added ThresholdStorage

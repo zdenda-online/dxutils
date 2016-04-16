@@ -1,5 +1,7 @@
 package cz.d1x.dxutils.storage;
 
+import cz.d1x.dxutils.io.IORuntimeException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -48,31 +50,35 @@ public interface DataStorage extends AutoCloseable {
      * Stores given bytes to the storage.
      *
      * @param bytes bytes to be stored
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    void write(byte[] bytes);
+    void write(byte[] bytes) throws IORuntimeException;
 
     /**
      * Stores given string to the storage using UTF-8 encoding.
      *
      * @param data data to be stored
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    void write(String data);
+    void write(String data) throws IORuntimeException;
 
     /**
      * Stores given string to the storage using given encoding.
      *
      * @param data     data to be stored
      * @param encoding encoding of the string
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    void write(String data, String encoding);
+    void write(String data, String encoding) throws IORuntimeException;
 
     /**
      * Writes data from given input stream to the storage.
      * Note that client is responsible for closing the stream (implementations should not close it).
      *
      * @param is input stream with data
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    void write(InputStream is);
+    void write(InputStream is) throws IORuntimeException;
 
     /**
      * Reads data from the storage and gives them as {@link String} representation in UTF-8 encoding.
@@ -80,8 +86,9 @@ public interface DataStorage extends AutoCloseable {
      * {@link OutOfMemoryError} is thrown.
      *
      * @return string representation of data in UTF-8
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    String readString();
+    String readString() throws IORuntimeException;
 
     /**
      * Reads data from the storage and gives them as {@link String} representation in given encoding.
@@ -90,8 +97,9 @@ public interface DataStorage extends AutoCloseable {
      *
      * @param encoding encoding for the string
      * @return string representation of data in given encoding
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    String readString(String encoding);
+    String readString(String encoding) throws IORuntimeException;
 
     /**
      * Reads data from the storage and gives them as byte array representation.
@@ -99,8 +107,9 @@ public interface DataStorage extends AutoCloseable {
      * {@link OutOfMemoryError} is thrown.
      *
      * @return bytes of data
+     * @throws IORuntimeException possible exception if any I/O operation fails
      */
-    byte[] readBytes();
+    byte[] readBytes() throws IORuntimeException;
 
     /**
      * Clears the storage and releases resources held by it.
