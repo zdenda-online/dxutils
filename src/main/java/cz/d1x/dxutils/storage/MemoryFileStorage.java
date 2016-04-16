@@ -1,5 +1,7 @@
 package cz.d1x.dxutils.storage;
 
+import cz.d1x.dxutils.io.IORuntimeException;
+
 import java.io.*;
 
 /**
@@ -66,7 +68,7 @@ public class MemoryFileStorage extends ThresholdStorage {
         try {
             return new FileOutputStream(backingFile, true);
         } catch (FileNotFoundException e) {
-            throw new DataStorageException("Unable to retrieve output stream to backing file '" + backingFile.getAbsolutePath() + "'", e);
+            throw new IORuntimeException(e);
         }
     }
 
@@ -75,7 +77,7 @@ public class MemoryFileStorage extends ThresholdStorage {
         try {
             return new FileInputStream(backingFile);
         } catch (FileNotFoundException e) {
-            throw new DataStorageException("Unable to retrieve input stream to backing file '" + backingFile.getAbsolutePath() + "'", e);
+            throw new IORuntimeException(e);
         }
     }
 

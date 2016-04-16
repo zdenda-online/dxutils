@@ -1,5 +1,7 @@
 package cz.d1x.dxutils.storage;
 
+import cz.d1x.dxutils.io.IORuntimeException;
+
 import java.io.*;
 
 /**
@@ -25,15 +27,17 @@ public abstract class ThresholdStorage extends BaseDataStorage {
      * Gets a secondary output stream for writing data when threshold is reached.
      *
      * @return secondary output stream
+     * @throws IORuntimeException possible exception if stream cannot be retrieved
      */
-    protected abstract OutputStream getSecondaryOutputStream();
+    protected abstract OutputStream getSecondaryOutputStream() throws IORuntimeException;
 
     /**
      * Gets a secondary input stream for reading data when threshold is reached.
      *
      * @return secondary input stream
+     * @throws IORuntimeException possible exception if stream cannot be retrieved
      */
-    protected abstract InputStream getSecondaryInputStream();
+    protected abstract InputStream getSecondaryInputStream() throws IORuntimeException;
 
     /**
      * Creates a new storage with default threshold of 5MB.
@@ -102,17 +106,17 @@ public abstract class ThresholdStorage extends BaseDataStorage {
         private OutputStream secondaryOutputStream = null;
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) throws IORuntimeException {
             if (secondaryOutputStream != null) {
-                secondaryOutputStream.write(b);
+                try {
+                    secondaryOutputStream.write(b);
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
             } else {
                 thresholdReached = memoryBytes.size() + 1 >= sizeThreshold;
                 if (thresholdReached) {
-                    secondaryOutputStream = getSecondaryOutputStream();
-                    if (memoryBytes != null && memoryBytes.size() > 0) {
-                        secondaryOutputStream.write(memoryBytes.toByteArray());
-                        memoryBytes = null; // free memory
-                    }
+                    switchToSecondaryOutputStream();
                     write(b);
                 } else {
                     memoryBytes.write(b);
@@ -121,17 +125,17 @@ public abstract class ThresholdStorage extends BaseDataStorage {
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) throws IORuntimeException {
             if (secondaryOutputStream != null) {
-                secondaryOutputStream.write(b, off, len);
+                try {
+                    secondaryOutputStream.write(b, off, len);
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
             } else {
                 thresholdReached = memoryBytes.size() + len >= sizeThreshold;
                 if (thresholdReached) {
-                    secondaryOutputStream = getSecondaryOutputStream();
-                    if (memoryBytes != null && memoryBytes.size() > 0) {
-                        secondaryOutputStream.write(memoryBytes.toByteArray());
-                        memoryBytes = null; // free memory
-                    }
+                    switchToSecondaryOutputStream();
                     write(b, off, len);
                 } else {
                     memoryBytes.write(b, off, len);
@@ -140,9 +144,25 @@ public abstract class ThresholdStorage extends BaseDataStorage {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() throws IORuntimeException {
             if (secondaryOutputStream != null) {
-                secondaryOutputStream.close();
+                try {
+                    secondaryOutputStream.close();
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
+            }
+        }
+
+        private void switchToSecondaryOutputStream() {
+            secondaryOutputStream = getSecondaryOutputStream();
+            if (memoryBytes != null && memoryBytes.size() > 0) {
+                try {
+                    secondaryOutputStream.write(memoryBytes.toByteArray());
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
+                memoryBytes = null; // free memory
             }
         }
     }

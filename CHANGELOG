@@ -1,7 +1,10 @@
 Whats new in latest versions
 
 Version 0.2
-* Introduced SynchronizedDataStorage, ThresholdStorage and re-worked existing storages
+* Added SynchronizedDataStorage
+* Added ThresholdStorage
+* Added SynchronizedInputStream and SynchronizedOutputStream
+* Re-worked existing storage implementations
 
 Version 0.1
 * Added DataStorage and MemoryFileBackedStorage

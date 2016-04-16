@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Tests {@link MemoryFileStorage} implementation.
@@ -141,41 +140,6 @@ public class MemoryFileStorageTest {
         assertCustomFileExists(tempFile, false); // should be destroyed by autoclose
     }
 
-    @Test
-    public void concurrencyWorks() throws IOException, InterruptedException {
-        // TODO move to different class
-        final DataStorage storage = new SynchronizedDataStorage(new MemoryFileStorage(100 * 8 * 1024)); // store in memory
-
-        final int CONCURRENT_TRIES = 1000; // larger value for better check while lower for better speed
-        for (int i = 0; i < CONCURRENT_TRIES; i++) {
-            final CountDownLatch latch = new CountDownLatch(2);
-            final String s1 = generateLongString('X', 10 * 8 * 1024); // something over default buffer size
-            final String s2 = generateLongString('Y', 10 * 8 * 1024); // something over default buffer size
-
-            Thread t1 = new Thread() {
-                @Override
-                public void run() {
-                    storage.write(s1);
-                    latch.countDown();
-                }
-            };
-            Thread t2 = new Thread() {
-                @Override
-                public void run() {
-                    storage.write(s2);
-                    latch.countDown();
-                }
-            };
-
-            t1.start();
-            t2.start();
-            latch.await(); // wait for both threads
-            String data = storage.readString();
-            Assert.assertTrue(data.equals(s1 + s2) || data.equals(s2 + s1));
-            storage.clear();
-        }
-    }
-
     private void assertCustomFileExists(File file, boolean exists) {
         Assert.assertTrue((exists && file.exists()) || (!exists && !file.exists()));
     }
@@ -227,14 +191,6 @@ public class MemoryFileStorageTest {
                 Assert.fail("IOException thrown " + e.getMessage());
             }
         }
-    }
-
-    private String generateLongString(char character, int length) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            sb.append(character);
-        }
-        return sb.toString();
     }
 
     private File prepareCustomTempFile() {

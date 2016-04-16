@@ -1,5 +1,7 @@
 package cz.d1x.dxutils.storage;
 
+import cz.d1x.dxutils.io.IORuntimeException;
+
 import java.io.*;
 import java.nio.charset.Charset;
 
@@ -58,7 +60,7 @@ public abstract class BaseDataStorage implements DataStorage {
                 os.write(buffer, 0, len);
             }
         } catch (IOException e) {
-            throw new DataStorageException("Unable to copy input stream to output stream", e);
+            throw new IORuntimeException(e);
         }
     }
 
@@ -103,12 +105,12 @@ public abstract class BaseDataStorage implements DataStorage {
             os.flush();
             return os.toByteArray();
         } catch (IOException e) {
-            throw new DataStorageException("Unable to read from input stream", e);
+            throw new IORuntimeException(e);
         }
     }
 
     /**
-     * Destroys the storage and releases all resources held by it.
+     * {@inheritDoc}
      */
     public void close() {
         clear();
