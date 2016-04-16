@@ -6,8 +6,7 @@ import java.io.*;
  * Implementation of {@link DataStorage} that stores data in-memory as long as they does not grow over given
  * size threshold. Once the threshold is reached, the data gets automatically serialized to the backing file.
  * <p>
- * The implementation is not thread-safe. It is up to client to take care of synchronization on single write/read
- * operations if needed.
+ * The implementation is thread-safe so you can concurrently call read/write operations without risk.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see DataStorage
@@ -79,7 +78,7 @@ public class MemoryFileStorage extends BaseDataStorage {
         return new OutputStream() {
 
             @Override
-            public void write(int b) throws IOException {
+            public synchronized void write(int b) throws IOException {
                 if (memoryBytes.size() + 1 >= sizeThreshold) {
                     copyMemoryToFile();
                     fileOutputStream.write(b);
@@ -89,7 +88,7 @@ public class MemoryFileStorage extends BaseDataStorage {
             }
 
             @Override
-            public void write(byte[] b) throws IOException {
+            public synchronized void write(byte[] b) throws IOException {
                 if (memoryBytes.size() + b.length >= sizeThreshold) {
                     copyMemoryToFile();
                     fileOutputStream.write(b);
@@ -99,7 +98,7 @@ public class MemoryFileStorage extends BaseDataStorage {
             }
 
             @Override
-            public void write(byte[] b, int off, int len) throws IOException {
+            public synchronized void write(byte[] b, int off, int len) throws IOException {
                 if (memoryBytes.size() + len >= sizeThreshold) {
                     copyMemoryToFile();
                     fileOutputStream.write(b, off, len);
@@ -109,7 +108,7 @@ public class MemoryFileStorage extends BaseDataStorage {
             }
 
             @Override
-            public void close() throws IOException {
+            public synchronized void close() throws IOException {
                 if (fileOutputStream != null) {
                     fileOutputStream.close();
                 }
@@ -128,7 +127,7 @@ public class MemoryFileStorage extends BaseDataStorage {
      *
      * @return input stream for reading data from the storage
      */
-    public InputStream getInputStream() {
+    public synchronized InputStream getInputStream() {
         if (fileOutputStream != null) {
             ensureFileOutputStreamIsClosed();
             try {
@@ -144,7 +143,7 @@ public class MemoryFileStorage extends BaseDataStorage {
     /**
      * Destroys this storage by releasing memory (if any data there) and deleting backing file if there is any.
      */
-    public void destroy() {
+    public synchronized void destroy() {
         memoryBytes = new ByteArrayOutputStream();
         if (fileOutputStream != null) {
             try {
