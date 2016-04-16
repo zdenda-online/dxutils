@@ -42,7 +42,7 @@ public abstract class ThresholdStorage extends BaseDataStorage {
     /**
      * Creates a new storage with default threshold of 5MB.
      */
-    public ThresholdStorage() {
+    protected ThresholdStorage() {
         this(DEFAULT_THRESHOLD);
     }
 
@@ -52,7 +52,7 @@ public abstract class ThresholdStorage extends BaseDataStorage {
      * @param sizeThreshold size threshold (in bytes) to drive switching to secondary storage.
      * @throws IllegalArgumentException possible exception if given threshold is not valid
      */
-    public ThresholdStorage(long sizeThreshold) {
+    protected ThresholdStorage(long sizeThreshold) {
         super();
         if (sizeThreshold < 0 || sizeThreshold > (Integer.MAX_VALUE - 8)) {
             throw new IllegalArgumentException("Threshold must be value between 0 and (Integer.MAX_VALUE - 8)");

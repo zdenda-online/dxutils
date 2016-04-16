@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
  */
 public abstract class BaseDataStorage implements DataStorage {
 
-    public static final int BUFFER_SIZE = 8 * 1024;
+    private static final int BUFFER_SIZE = 8 * 1024;
 
     /**
      * Stores given bytes to the storage.
