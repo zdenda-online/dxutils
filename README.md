@@ -51,6 +51,6 @@ try (DataStorage storage = new MemoryFileStorage(...)) {
 
 **SynchronizedDataStorage**
 ```java
-DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp")); // or any other implementation
+DataStorage storage = ... // any implementation (e.g. MemoryFileStorage)
 DataStorage synchronizedStorage = new SynchronizedDataStorage(storage);
 ```
