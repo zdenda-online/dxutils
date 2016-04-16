@@ -31,21 +31,26 @@ Examples
 ```java
 DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
 
-OutputStream os = storage.getOutputStream();
 // write data to storage, if over 1kB it gets automatically stored to /tmp/backing.tmp
-os.close();
-// optionally you can storage.getOutputStream() again, writing to it will append new data
+storage.getOutputStream(); // write via OutputStream, don't forget to os.close() !!
+storage.write("string data"); // UTF-8
+storage.write("string data", "UTF-8"); // custom encoding
+storage.write(new byte[]{0x01, 0x02, 0x03});
+storage.write(new ByteArrayInputStream(new byte[]{})); // consume any InputStream
+// multiple writes append existing data
 
-InputStream is = storage.getInputStream();
-// read data from storage
-is.close();
+// read data from storage, automatically selects source (memory or file)
+storage.getInputStream(); // read via InputStream, don't forget to is.close() !!
+storage.readString(); // UTF-8
+storage.readString("UTF-8"); // custom encoding
+storage.readBytes();
 
-storage.destroy(); // releases memory or deletes /tmp/backing.tmp if created
+// when you are finished with storage, you should clear/close it to release resources
+storage.clear(); // releases memory or deletes /tmp/backing.tmp if created
 
-clear
-try (DataStorage storage = new MemoryFileStorage(...)) {
-   // there are also byte[] and String based methods for read/write oprations
-   storage.write("This will also append data to storage");
+// you can use try-with-resource as DataStorage implementations are AutoCloseable
+try (DataStorage autoclosedStorage = new MemoryFileStorage()) {
+    autoclosedStorage.write("This will also append data to storage");
 }
 ```
 
