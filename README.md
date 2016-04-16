@@ -2,6 +2,8 @@ DXUtils: Utilities
 ==================
 Simple Java library with various utilities built purely on Java SE without any dependencies.
 
+The utilities are mainly related to I/O streaming.
+
 Maven dependency
 ----------------
 
@@ -9,7 +11,7 @@ Maven dependency
 <dependency>
    <groupId>cz.d1x</groupId>
    <artifactId>dxutils</artifactId>
-   <version>0.1</version>
+   <version>0.2</version>
 </dependency>
 ```
 
@@ -19,6 +21,9 @@ Features
 - **MemoryFileStorage** for storing data in memory if their size does not exceeds given threshold. If threshold is
 reached, the data are automatically stored in backing file. Useful for applications that want to store data in memory
 but may receive larger data occasionally.
+
+- **SynchronizedDataStorage** for wrapping existing DataStorage implementations (e.g. MemoryFileStorage) to add
+synchronization for all read/write operations.
 
 Examples
 --------
@@ -42,4 +47,10 @@ try (DataStorage storage = new MemoryFileStorage(...)) {
    // there are also byte[] and String based methods for read/write oprations
    storage.write("This will also append data to storage");
 }
+```
+
+**SynchronizedDataStorage**
+```java
+DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp")); // or any other implementation
+DataStorage synchronizedStorage = new SynchronizedDataStorage(storage);
 ```
