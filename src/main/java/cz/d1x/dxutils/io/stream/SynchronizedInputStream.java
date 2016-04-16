@@ -9,6 +9,7 @@ import java.io.InputStream;
  * Simple decorator for {@link InputStream} that synchronizes all its methods via given mutex.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ * @see SynchronizedOutputStream
  */
 public class SynchronizedInputStream extends InputStream {
 

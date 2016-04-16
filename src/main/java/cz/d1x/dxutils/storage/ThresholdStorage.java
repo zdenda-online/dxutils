@@ -12,8 +12,8 @@ import java.io.*;
  * super.clear() after doing its clean-up.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see DataStorage
  * @see MemoryFileStorage
+ * @see DataStorage
  */
 public abstract class ThresholdStorage extends BaseDataStorage {
 

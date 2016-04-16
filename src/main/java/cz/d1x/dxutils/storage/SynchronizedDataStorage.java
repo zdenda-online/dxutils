@@ -9,6 +9,9 @@ import java.io.OutputStream;
 /**
  * Decorator for any {@link DataStorage} that makes all its read/write operations synchronized so any concurrent
  * threads won't interfere.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ * @see DataStorage
  */
 public class SynchronizedDataStorage implements DataStorage {
 

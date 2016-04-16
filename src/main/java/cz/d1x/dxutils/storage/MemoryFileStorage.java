@@ -12,8 +12,9 @@ import java.io.*;
  * can {@link #clear()} the storage and start writing again.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see DataStorage
+ * @see SynchronizedDataStorage
  * @see ThresholdStorage
+ * @see DataStorage
  */
 public class MemoryFileStorage extends ThresholdStorage {
 

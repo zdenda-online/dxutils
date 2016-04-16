@@ -23,10 +23,9 @@ import java.io.OutputStream;
  * statement as implementations are {@link AutoCloseable}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see BaseDataStorage
- * @see ThresholdStorage
  * @see MemoryFileStorage
  * @see SynchronizedDataStorage
+ * @see ThresholdStorage
  */
 public interface DataStorage extends AutoCloseable {
 
