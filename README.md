@@ -53,4 +53,10 @@ try (DataStorage storage = new MemoryFileStorage(...)) {
 ```java
 DataStorage storage = ... // any implementation (e.g. MemoryFileStorage)
 DataStorage synchronizedStorage = new SynchronizedDataStorage(storage);
+
+synchronizedStorage.write("first"); // from any thread
+synchronizedStorage.write("second"); // from any different thread
+
+String result = synchronizedStorage.readString(); // later on
+// if implementation allows appending, result will be one of "firstsecond" or "secondfirst"
 ```
