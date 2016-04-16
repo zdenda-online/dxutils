@@ -3,16 +3,17 @@ package cz.d1x.dxutils.storage;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Created by d1x on 16.4.16.
+ * Tests {@link SynchronizedDataStorage} implementation.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
 public class SynchronizedDataStorageTest {
 
     @Test
-    public void concurrencyWorks() throws IOException, InterruptedException {
+    public void concurrencyWorks() throws InterruptedException {
         final DataStorage deletagte = new MemoryFileStorage(100 * 8 * 1024); // nay implementation will do
         final DataStorage storage = new SynchronizedDataStorage(deletagte);
 
