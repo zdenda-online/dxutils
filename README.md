@@ -24,7 +24,7 @@ Examples
 --------
 **MemoryFileStorage**
 ```java
-MemoryFileStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
+DataStorage storage = new MemoryFileStorage(1000, new File("/tmp/backing.tmp"));
 
 OutputStream os = storage.getOutputStream();
 // write data to storage, if over 1kB it gets automatically stored to /tmp/backing.tmp
@@ -37,7 +37,7 @@ is.close();
 
 storage.destroy(); // releases memory or deletes /tmp/backing.tmp if created
 
-// optionally you can use try-with-resources that will automatically call destroy()
+clear
 try (DataStorage storage = new MemoryFileStorage(...)) {
    // there are also byte[] and String based methods for read/write oprations
    storage.write("This will also append data to storage");

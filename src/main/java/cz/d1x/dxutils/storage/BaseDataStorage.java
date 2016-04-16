@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 /**
  * Base implementation that only adds few useful methods built on top of default methods from {@link DataStorage}.
  * <p>
- * The implementation is thread-safe so you can concurrently call read/write operations without risk.
+ * The base implementation is not thread-safe but clients can use {@link SynchronizedDataStorage} to ensure thread-safety.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see DataStorage
@@ -50,7 +50,7 @@ public abstract class BaseDataStorage implements DataStorage {
      *
      * @param is input stream with data
      */
-    public synchronized void write(InputStream is) {
+    public void write(InputStream is) {
         try (OutputStream os = getOutputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int len;
@@ -92,7 +92,7 @@ public abstract class BaseDataStorage implements DataStorage {
      *
      * @return bytes of data
      */
-    public synchronized byte[] readBytes() {
+    public byte[] readBytes() {
         try (InputStream is = getInputStream()) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
@@ -111,6 +111,6 @@ public abstract class BaseDataStorage implements DataStorage {
      * Destroys the storage and releases all resources held by it.
      */
     public void close() {
-        destroy();
+        clear();
     }
 }

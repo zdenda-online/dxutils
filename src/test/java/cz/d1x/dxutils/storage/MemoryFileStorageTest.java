@@ -27,7 +27,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, bytes);
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -40,7 +40,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, bytes);
         assertCustomFileExists(tempFile, false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, bytes);
         assertCustomFileExists(tempFile, true);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -65,7 +65,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, bytes);
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -79,7 +79,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, "These are some nice bytes".getBytes(Charsets.UTF_8.name()));
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, "These are some nice bytes".getBytes(Charsets.UTF_8.name()));
         assertTempFileExists(true);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, "Hello".getBytes());
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -115,7 +115,7 @@ public class MemoryFileStorageTest {
 
         assertDataInStorage(storage, "Hello".getBytes(Charsets.UTF_8.name()));
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MemoryFileStorageTest {
 
         Assert.assertEquals("Hello", str);
         assertTempFileExists(false);
-        storage.destroy();
+        storage.clear();
     }
 
     @Test
@@ -143,9 +143,11 @@ public class MemoryFileStorageTest {
 
     @Test
     public void concurrencyWorks() throws IOException, InterruptedException {
-        final MemoryFileStorage storage = new MemoryFileStorage(100 * 8 * 1024); // store in memory
+        // TODO move to different class
+        final DataStorage storage = new SynchronizedDataStorage(new MemoryFileStorage(100 * 8 * 1024)); // store in memory
 
-        for (int i = 0; i < 1000; i++) {
+        final int CONCURRENT_TRIES = 1000; // larger value for better check while lower for better speed
+        for (int i = 0; i < CONCURRENT_TRIES; i++) {
             final CountDownLatch latch = new CountDownLatch(2);
             final String s1 = generateLongString('X', 10 * 8 * 1024); // something over default buffer size
             final String s2 = generateLongString('Y', 10 * 8 * 1024); // something over default buffer size
@@ -170,7 +172,7 @@ public class MemoryFileStorageTest {
             latch.await(); // wait for both threads
             String data = storage.readString();
             Assert.assertTrue(data.equals(s1 + s2) || data.equals(s2 + s1));
-            storage.destroy();
+            storage.clear();
         }
     }
 
@@ -191,12 +193,12 @@ public class MemoryFileStorageTest {
         }
     }
 
-    private void assertDataInStorage(MemoryFileStorage storage, byte[] expectedData) {
+    private void assertDataInStorage(DataStorage storage, byte[] expectedData) {
         byte[] actualData = readFromStorage(storage);
         Assert.assertArrayEquals(expectedData, actualData);
     }
 
-    private void writeToStorage(MemoryFileStorage storage, byte[] data) {
+    private void writeToStorage(DataStorage storage, byte[] data) {
         OutputStream os = storage.getOutputStream();
         try {
             os.write(data);
@@ -211,7 +213,7 @@ public class MemoryFileStorageTest {
         }
     }
 
-    private byte[] readFromStorage(MemoryFileStorage storage) {
+    private byte[] readFromStorage(DataStorage storage) {
         InputStream is = storage.getInputStream();
         try {
             return IOUtils.toByteArray(is);
