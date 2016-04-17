@@ -8,9 +8,6 @@ package cz.d1x.dxutils.io;
  */
 public class IORuntimeException extends RuntimeException {
 
-    public IORuntimeException() {
-    }
-
     public IORuntimeException(String message) {
         super(message);
     }
@@ -21,9 +18,5 @@ public class IORuntimeException extends RuntimeException {
 
     public IORuntimeException(Throwable cause) {
         super(cause);
-    }
-
-    public IORuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
