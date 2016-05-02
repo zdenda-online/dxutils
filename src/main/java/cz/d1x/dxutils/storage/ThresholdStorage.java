@@ -40,6 +40,14 @@ public abstract class ThresholdStorage extends BaseDataStorage {
     protected abstract InputStream getSecondaryInputStream() throws IORuntimeException;
 
     /**
+     * Gets a size of secondary input.
+     *
+     * @return size of input
+     * @throws IORuntimeException possible exception if size cannot be retrieved
+     */
+    protected abstract long getSecondarySize() throws IORuntimeException;
+
+    /**
      * Creates a new storage with default threshold of 5MB.
      */
     protected ThresholdStorage() {
@@ -90,6 +98,15 @@ public abstract class ThresholdStorage extends BaseDataStorage {
             return getSecondaryInputStream();
         } else {
             return new ByteArrayInputStream(memoryBytes.toByteArray());
+        }
+    }
+
+    @Override
+    public long getSize() throws IORuntimeException {
+        if (thresholdReached) {
+            return getSecondarySize();
+        } else {
+            return memoryBytes.size();
         }
     }
 

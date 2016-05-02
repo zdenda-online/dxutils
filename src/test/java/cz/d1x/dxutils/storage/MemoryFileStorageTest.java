@@ -127,6 +127,26 @@ public class MemoryFileStorageTest {
     }
 
     @Test
+    public void sizeIsCorrectInMemory() {
+        MemoryFileStorage storage = new MemoryFileStorage();
+
+        storage.write("Hello");
+        Assert.assertEquals(5, storage.getSize());
+
+        storage.clear();
+    }
+
+    @Test
+    public void sizeIsCorrectInFile() {
+        MemoryFileStorage storage = new MemoryFileStorage(5);
+
+        storage.write("This is over limit");
+        Assert.assertEquals(18, storage.getSize());
+
+        storage.clear();
+    }
+
+    @Test
     public void autocloseDestroysFile() {
         File tempFile = prepareCustomTempFile();
         try (MemoryFileStorage storage = new MemoryFileStorage(10, tempFile)) {

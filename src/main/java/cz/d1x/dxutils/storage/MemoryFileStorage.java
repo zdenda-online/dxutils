@@ -82,6 +82,14 @@ public class MemoryFileStorage extends ThresholdStorage {
         }
     }
 
+    @Override
+    protected long getSecondarySize() throws IORuntimeException {
+        if (!backingFile.exists()) {
+            throw new IORuntimeException("Backing file " + backingFile.getAbsolutePath() + " does not exist!");
+        }
+        return backingFile.length();
+    }
+
     /**
      * Clears the memory and deletes backing file if exists.
      */

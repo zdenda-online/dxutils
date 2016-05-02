@@ -88,6 +88,13 @@ public class SynchronizedDataStorage implements DataStorage {
     }
 
     @Override
+    public long getSize() {
+        synchronized (mutex) {
+            return delegate.getSize();
+        }
+    }
+
+    @Override
     public void clear() {
         synchronized (mutex) {
             delegate.clear();

@@ -111,6 +111,15 @@ public interface DataStorage extends AutoCloseable {
     byte[] readBytes() throws IORuntimeException;
 
     /**
+     * Gets a size of the stored data in bytes.
+     * It is not guaranteed that every implementation returns a value but most of them do.
+     *
+     * @return size in bytes
+     * @throws IORuntimeException possible exception if size cannot be retrieved
+     */
+    long getSize() throws IORuntimeException;
+
+    /**
      * Clears the storage and releases resources held by it.
      */
     void clear();
